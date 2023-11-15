@@ -22,18 +22,25 @@ public class ServerApp {
     static String serviceName = "EchoServer";
     static private MqttService mqttService;
 
+    private static EchoServer echoServer;
+
     public static void main(String[] args) {
         try {
-            System.setProperty("java.rmi.server.hostname","127.0.0.1");
+            System.setProperty("java.rmi.server.hostname", "127.0.0.1");
             initiateRegisty();
             String serverName = getServerName(0);
             mqttService = new MqttService(serverName);
-            EchoServer echoServer = new EchoServer(mqttService);
+            echoServer = new EchoServer(mqttService);
             bindName(echoServer, serverName);
-            if(serverName.contains("Clone")) mqttService.subscribe();
+            if (serverName.contains("Clone")) {
+                mqttService.subscribe();
+            }
             mqttService.setMqttCallBack(callback(echoServer));
-            if(notMaster(serverName))healthCheckMaster();
-            System.out.println("ObjetoServidor esta ativo! Com nome de servidor: "+ serverName);
+            if (notMaster(serverName)) {
+                getHistory();
+                healthCheckMaster();
+            }
+            System.out.println("ObjetoServidor esta ativo! Com nome de servidor: " + serverName);
         } catch (Exception e) {
             System.err.println("Exceção no servidor Echo: " + e.getMessage());
             e.printStackTrace();
@@ -41,7 +48,7 @@ public class ServerApp {
     }
 
     private static String getServerName(int i) throws MalformedURLException, RemoteException {
-        String serverName = i == 0 ? "master" :  String.format("Clone/%d", i);
+        String serverName = i == 0 ? "master" : String.format("Clone/%d", i);
         String fullAddress = getFullAddress(serverName);
         try {
             Naming.lookup(fullAddress);
@@ -52,10 +59,10 @@ public class ServerApp {
     }
 
     private static boolean notMaster(String serverName) {
-        return !serverName.equals("//localhost:8088/EchoServer/master");
+        return !serverName.contains("master");
     }
 
-    private static void initiateRegisty(){
+    private static void initiateRegisty() {
         try {
             LocateRegistry.createRegistry(8088);
         } catch (ExportException e) {
@@ -66,29 +73,42 @@ public class ServerApp {
     }
 
 
-    private static void healthCheckMaster() throws RemoteException {
+    private static void healthCheckMaster() {
         var executor = Executors.newSingleThreadScheduledExecutor();
         executor.schedule(() -> {
             try {
-                Echo objetoRemoto = (Echo) Naming.lookup(":/master");
-                while(true) {
+                Echo objetoRemoto = (Echo) Naming.lookup("//localhost:8088/EchoServer/master");
+                while (true) {
                     objetoRemoto.healthCheck();
-                    Thread.sleep(6000);
+                    Thread.sleep(1000);
                     System.out.println("Server Master still alive!");
                 }
             } catch (RemoteException e) {
-                electeNewMaster();
-            } catch (MalformedURLException | NotBoundException e) {
-                throw new RuntimeException(e);
-            } catch (InterruptedException e) {
+                electNewMaster();
+            } catch (MalformedURLException | NotBoundException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
-        }, 10, TimeUnit.SECONDS);
+        }, 5, TimeUnit.SECONDS);
 
     }
 
-    private static void electeNewMaster() {
-        System.out.println("TODO: Eleger novo servidor Mestre");
+    private static void getHistory() {
+        try {
+            Echo master = (Echo) Naming.lookup("//localhost:8088/EchoServer/master");
+            var history = master.getListOfMsg();
+            echoServer.updateHistory(history);
+        } catch (NotBoundException | MalformedURLException | RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void electNewMaster() {
+        try {
+            var registry = LocateRegistry.getRegistry(8088);
+            System.out.println(registry.lookup("//localhost:8088/EchoServer/master").toString());
+        } catch (RemoteException | NotBoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static void bindName(EchoServer echoServer, String serverName) throws MalformedURLException, RemoteException {
@@ -96,11 +116,12 @@ public class ServerApp {
         Naming.rebind(fullAddress, echoServer);
     }
 
-    private static String getFullAddress(String serverName){
+    private static String getFullAddress(String serverName) {
         return String.format("%s:%s/%s/%s", host, port, serviceName, serverName);
     }
-    private static MqttCallback callback(EchoServer echoServer){
-        return new MqttCallback(){
+
+    private static MqttCallback callback(EchoServer echoServer) {
+        return new MqttCallback() {
 
             @Override
             public void connectionLost(Throwable throwable) {
@@ -110,6 +131,7 @@ public class ServerApp {
             @Override
             public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
                 echoServer.addMessage(mqttMessage.toString());
+                System.out.println(echoServer.getListOfMsg());
                 System.out.println("Mensagem adicionada no servidor: " + mqttMessage.toString());
             }
 

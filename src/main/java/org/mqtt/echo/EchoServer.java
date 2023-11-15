@@ -19,6 +19,10 @@ public class EchoServer extends UnicastRemoteObject implements Echo {
         messages.add(message);
     }
 
+    public void updateHistory(List<String> history) {
+        messages = history;
+    }
+
     @Override
     public String echo(String message) throws RemoteException {
         messages.add(message);

@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="ServerApp" type="Application" factoryName="Application" folderName="ServerApp" nameIsGenerated="true">
+  <configuration default="false" name="ServerApp" type="Application" factoryName="Application" folderName="ServerApp" singleton="false" nameIsGenerated="true">
     <option name="MAIN_CLASS_NAME" value="org.mqtt.servers.ServerApp" />
     <module name="mqtt-project" />
     <extension name="coverage">

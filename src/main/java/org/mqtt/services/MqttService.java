@@ -3,6 +3,8 @@ package org.mqtt.services;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
+import java.util.UUID;
+
 public class MqttService {
     public static String topic = "mqtt-topic";
     //Quality of Service = 2 offers the highest level of service in MQTT
@@ -14,7 +16,7 @@ public class MqttService {
     public MqttService(String clientId){
         try {
             MemoryPersistence persistence = new MemoryPersistence();
-            mqttPublisher = new MqttClient(broker, clientId, persistence);
+            mqttPublisher = new MqttClient(broker, UUID.randomUUID().toString(), persistence);
             MqttConnectOptions connOpts = new MqttConnectOptions();
             connOpts.setCleanSession(true);
             connOpts.setAutomaticReconnect(true);
