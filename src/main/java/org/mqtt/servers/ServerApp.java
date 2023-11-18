@@ -12,9 +12,10 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.server.ExportException;
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class ServerApp {
     static String host = "//localhost";
@@ -27,7 +28,7 @@ public class ServerApp {
     public static void main(String[] args) {
         try {
             System.setProperty("java.rmi.server.hostname", "127.0.0.1");
-            initiateRegisty();
+//            initiateRegisty();
             String serverName = getServerName(0);
             mqttService = new MqttService(serverName);
             echoServer = new EchoServer(mqttService);
@@ -62,14 +63,18 @@ public class ServerApp {
         return !serverName.contains("master");
     }
 
-    private static void initiateRegisty() {
-        try {
-            LocateRegistry.createRegistry(8088);
-        } catch (ExportException e) {
-            System.out.println("Registry já iniciado!");
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+//    private static void initiateRegisty() {
+//        try {
+//            LocateRegistry.createRegistry(8088);
+//        } catch (ExportException e) {
+//            System.out.println("Registry já iniciado!");
+//        } catch (RemoteException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+
+    private static Echo getMaster() throws MalformedURLException, NotBoundException, RemoteException {
+        return (Echo) Naming.lookup("//localhost:8088/EchoServer/master");
     }
 
 
@@ -77,9 +82,9 @@ public class ServerApp {
         var executor = Executors.newSingleThreadScheduledExecutor();
         executor.schedule(() -> {
             try {
-                Echo objetoRemoto = (Echo) Naming.lookup("//localhost:8088/EchoServer/master");
+                var master = getMaster();
                 while (true) {
-                    objetoRemoto.healthCheck();
+                    master.healthCheck();
                     Thread.sleep(1000);
                     System.out.println("Server Master still alive!");
                 }
@@ -94,7 +99,7 @@ public class ServerApp {
 
     private static void getHistory() {
         try {
-            Echo master = (Echo) Naming.lookup("//localhost:8088/EchoServer/master");
+            var master = getMaster();
             var history = master.getListOfMsg();
             echoServer.updateHistory(history);
         } catch (NotBoundException | MalformedURLException | RemoteException e) {
@@ -102,11 +107,28 @@ public class ServerApp {
         }
     }
 
+    private static int getOrder() {
+        var name = mqttService.name;
+        return Integer.parseInt(name.split("/")[1]);
+    }
+
     private static void electNewMaster() {
         try {
             var registry = LocateRegistry.getRegistry(8088);
-            System.out.println(registry.lookup("//localhost:8088/EchoServer/master").toString());
-        } catch (RemoteException | NotBoundException e) {
+            var list = Arrays.stream(registry.list()).filter(n -> !n.contains("master")).collect(Collectors.toList());
+            var order = 0;
+            for (String i : list) {
+                var n = Integer.parseInt(Arrays.stream(i.split("/")).toArray()[2].toString());
+                if (n < order || order == 0) {
+                    order = n;
+                }
+            }
+            var myOrder = getOrder();
+            if(myOrder == order) {
+                // TODO: new master
+            }
+            System.out.println(myOrder);
+        } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }

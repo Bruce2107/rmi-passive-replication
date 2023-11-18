@@ -10,11 +10,12 @@ public class MqttService {
     //Quality of Service = 2 offers the highest level of service in MQTT
     public static int qos = 2;
     public static String broker = "tcp://127.0.0.1:1883";
-    public static String publisherId = "mqtt-publisher";
+    public String name = "mqtt-publisher";
     private final MqttClient mqttPublisher;
 
     public MqttService(String clientId){
         try {
+            name = clientId;
             MemoryPersistence persistence = new MemoryPersistence();
             mqttPublisher = new MqttClient(broker, UUID.randomUUID().toString(), persistence);
             MqttConnectOptions connOpts = new MqttConnectOptions();
