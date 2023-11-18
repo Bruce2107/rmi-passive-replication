@@ -63,7 +63,7 @@ public class ServerApp {
     }
 
     private static Echo getMaster() throws MalformedURLException, NotBoundException, RemoteException {
-        return (Echo) Naming.lookup("//localhost:8088/EchoServer/master");
+        return (Echo) Naming.lookup("//localhost:8088/Echo/master");
     }
 
 

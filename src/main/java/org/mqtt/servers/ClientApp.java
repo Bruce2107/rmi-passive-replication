@@ -11,7 +11,7 @@ public class ClientApp {
     public static void main(String[] args) {
         Echo remoteEcho;
         try {
-            remoteEcho = (Echo) Naming.lookup("//localhost:8088/EchoServer/master");
+            remoteEcho = (Echo) Naming.lookup("//localhost:8088/Echo/master");
             int i = 0;
             while(true){
                 i++;
