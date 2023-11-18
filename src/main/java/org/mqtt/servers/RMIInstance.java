@@ -8,6 +8,7 @@ public class RMIInstance {
     public static void main(String[] args) {
         try {
             LocateRegistry.createRegistry(8088);
+            System.out.println("Registry iniciado na porta 8088");
             while (true) {
 
             }

@@ -9,7 +9,7 @@ import java.util.List;
 
 public class EchoServer extends UnicastRemoteObject implements Echo {
     private List<String> messages = new ArrayList<>();
-    private MqttService mqttService;
+    private final MqttService mqttService;
     public EchoServer(MqttService mqttService) throws RemoteException {
         super();
         this.mqttService = mqttService;

@@ -23606,3 +23606,59 @@
 1700311926: New connection from 172.24.0.1:41530 on port 1883.
 1700311927: New client connected from 172.24.0.1:41530 as cb5bba3a-6bf0-4540-be39-6569fa8e0072 (p2, c1, k60).
 1700311930: Client 8e4bb295-ceda-4674-bc1d-869960c2ba16 closed its connection.
+1700312025: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1700312045: Client cb5bba3a-6bf0-4540-be39-6569fa8e0072 closed its connection.
+1700312045: Client d8765e48-591d-4aa7-afb1-74372795a51e closed its connection.
+1700312438: New connection from 172.24.0.1:51122 on port 1883.
+1700312438: New client connected from 172.24.0.1:51122 as 663f853a-d1ea-4512-b823-24a63ced1793 (p2, c1, k60).
+1700312441: New connection from 172.24.0.1:51138 on port 1883.
+1700312442: New client connected from 172.24.0.1:51138 as 85f6f943-feb0-429a-b89a-243433a8c4cf (p2, c1, k60).
+1700312445: New connection from 172.24.0.1:51154 on port 1883.
+1700312445: New client connected from 172.24.0.1:51154 as 701e07aa-4b0e-4594-ab79-4e5fe1dc03a2 (p2, c1, k60).
+1700312454: Client 663f853a-d1ea-4512-b823-24a63ced1793 closed its connection.
+1700312495: Client 701e07aa-4b0e-4594-ab79-4e5fe1dc03a2 closed its connection.
+1700312495: Client 85f6f943-feb0-429a-b89a-243433a8c4cf closed its connection.
+1700312533: New connection from 172.24.0.1:47530 on port 1883.
+1700312533: New client connected from 172.24.0.1:47530 as 9e2734bd-d55c-464f-b306-9dab71519f6f (p2, c1, k60).
+1700312537: New connection from 172.24.0.1:51506 on port 1883.
+1700312537: New client connected from 172.24.0.1:51506 as 611d0023-62d2-41c1-85ad-841b45e4635d (p2, c1, k60).
+1700312541: New connection from 172.24.0.1:51508 on port 1883.
+1700312541: New client connected from 172.24.0.1:51508 as 39f0fe78-84ad-47e9-bdb4-7b78022d6789 (p2, c1, k60).
+1700312550: Client 9e2734bd-d55c-464f-b306-9dab71519f6f closed its connection.
+1700312582: Client 611d0023-62d2-41c1-85ad-841b45e4635d closed its connection.
+1700312609: Client 39f0fe78-84ad-47e9-bdb4-7b78022d6789 closed its connection.
+1700312686: New connection from 172.24.0.1:38186 on port 1883.
+1700312687: New client connected from 172.24.0.1:38186 as a8cedada-37b4-489d-a090-7f6dce6fce65 (p2, c1, k60).
+1700312691: New connection from 172.24.0.1:38198 on port 1883.
+1700312691: New client connected from 172.24.0.1:38198 as 3875a96e-3930-49cb-9dd7-be8b4892ef89 (p2, c1, k60).
+1700312701: New connection from 172.24.0.1:47778 on port 1883.
+1700312701: New client connected from 172.24.0.1:47778 as da9dc18c-9957-43b0-9479-4db2428bc11a (p2, c1, k60).
+1700312716: Client a8cedada-37b4-489d-a090-7f6dce6fce65 closed its connection.
+1700312811: Client 3875a96e-3930-49cb-9dd7-be8b4892ef89 closed its connection.
+1700312821: Client da9dc18c-9957-43b0-9479-4db2428bc11a closed its connection.
+1700312862: New connection from 172.24.0.1:55568 on port 1883.
+1700312863: New client connected from 172.24.0.1:55568 as f4359cfa-5f3c-4dac-96c2-71a9388c1ad0 (p2, c1, k60).
+1700312866: New connection from 172.24.0.1:57142 on port 1883.
+1700312867: New client connected from 172.24.0.1:57142 as ff5f3042-d597-4713-9480-f901ace8fe35 (p2, c1, k60).
+1700312875: New connection from 172.24.0.1:57146 on port 1883.
+1700312875: New client connected from 172.24.0.1:57146 as 17613637-a360-44a3-91b1-94855aa81029 (p2, c1, k60).
+1700312879: Client f4359cfa-5f3c-4dac-96c2-71a9388c1ad0 closed its connection.
+1700312900: Client ff5f3042-d597-4713-9480-f901ace8fe35 closed its connection.
+1700312910: Client 17613637-a360-44a3-91b1-94855aa81029 closed its connection.
+1700313826: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1700324912: Client auto-DE244AF1-25FC-FC6A-37EE-20AC8D832432 disconnected.
+1700324912: Client auto-5A5BF599-FF48-1421-89D4-6A4C87F39278 disconnected.
+1700324912: mosquitto version 2.0.18 terminating
+1700324912: Saving in-memory database to /mosquitto/data//mosquitto.db.
+1700326300: mosquitto version 2.0.18 starting
+1700326300: Config loaded from /mosquitto/config/mosquitto.conf.
+1700326300: Opening ipv4 listen socket on port 1883.
+1700326300: Opening ipv6 listen socket on port 1883.
+1700326300: mosquitto version 2.0.18 running
+1700326300: New connection from 172.24.0.3:45486 on port 1883.
+1700326300: New client connected from 172.24.0.3:45486 as auto-94E8B0E2-BDCE-6DD3-A437-8F5CB99010FB (p2, c1, k60).
+1700326300: New connection from 172.24.0.5:35054 on port 1883.
+1700326300: New client connected from 172.24.0.5:35054 as auto-EE4180A7-8834-7AF4-F79B-A217F310F922 (p2, c1, k60).
+1700326300: Client auto-EE4180A7-8834-7AF4-F79B-A217F310F922 disconnected.
+1700326300: New connection from 172.24.0.4:51528 on port 1883.
+1700326300: New client connected from 172.24.0.4:51528 as auto-14FC89B9-62E2-EBEA-6ED5-B0EBE14586DB (p2, c1, k60).

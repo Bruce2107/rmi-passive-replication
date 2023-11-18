@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class ServerApp {
     static String host = "//localhost";
     static String port = "8088";
-    static String serviceName = "EchoServer";
+    static String serviceName = "Echo";
     static private MqttService mqttService;
 
     private static EchoServer echoServer;
@@ -33,7 +33,7 @@ public class ServerApp {
             mqttService = new MqttService(serverName);
             echoServer = new EchoServer(mqttService);
             bindName(echoServer, serverName);
-            if (serverName.contains("Clone")) {
+            if (notMaster(serverName)) {
                 mqttService.subscribe();
             }
             mqttService.setMqttCallBack(callback(echoServer));
@@ -41,7 +41,7 @@ public class ServerApp {
                 getHistory();
                 healthCheckMaster();
             }
-            System.out.println("ObjetoServidor esta ativo! Com nome de servidor: " + serverName);
+            System.out.println("Servidor ativo: " + serverName);
         } catch (Exception e) {
             System.err.println("Exceção no servidor Echo: " + e.getMessage());
         }
