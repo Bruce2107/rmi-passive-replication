@@ -2,6 +2,7 @@ package org.mqtt.servers;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.mqtt.echo.Echo;
 import org.mqtt.echo.EchoServer;
@@ -28,7 +29,6 @@ public class ServerApp {
     public static void main(String[] args) {
         try {
             System.setProperty("java.rmi.server.hostname", "127.0.0.1");
-//            initiateRegisty();
             String serverName = getServerName(0);
             mqttService = new MqttService(serverName);
             echoServer = new EchoServer(mqttService);
@@ -44,7 +44,6 @@ public class ServerApp {
             System.out.println("ObjetoServidor esta ativo! Com nome de servidor: " + serverName);
         } catch (Exception e) {
             System.err.println("Exceção no servidor Echo: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -62,16 +61,6 @@ public class ServerApp {
     private static boolean notMaster(String serverName) {
         return !serverName.contains("master");
     }
-
-//    private static void initiateRegisty() {
-//        try {
-//            LocateRegistry.createRegistry(8088);
-//        } catch (ExportException e) {
-//            System.out.println("Registry já iniciado!");
-//        } catch (RemoteException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
 
     private static Echo getMaster() throws MalformedURLException, NotBoundException, RemoteException {
         return (Echo) Naming.lookup("//localhost:8088/EchoServer/master");
@@ -117,18 +106,25 @@ public class ServerApp {
             var registry = LocateRegistry.getRegistry(8088);
             var list = Arrays.stream(registry.list()).filter(n -> !n.contains("master")).collect(Collectors.toList());
             var order = 0;
+            var cloneName = "";
             for (String i : list) {
                 var n = Integer.parseInt(Arrays.stream(i.split("/")).toArray()[2].toString());
                 if (n < order || order == 0) {
                     order = n;
+                    cloneName = i;
                 }
             }
             var myOrder = getOrder();
-            if(myOrder == order) {
-                // TODO: new master
+            if (myOrder == order) {
+                System.out.println(order);
+                registry.unbind(cloneName);
+                mqttService.unsubscribe();
+                bindName(echoServer,"master");
+            } else {
+                healthCheckMaster();
             }
-            System.out.println(myOrder);
-        } catch (RemoteException e) {
+            System.out.println(Arrays.toString(registry.list()));
+        } catch (RemoteException | NotBoundException | MqttException | MalformedURLException e) {
             throw new RuntimeException(e);
         }
     }

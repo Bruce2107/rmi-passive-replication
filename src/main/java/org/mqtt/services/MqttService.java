@@ -43,6 +43,10 @@ public class MqttService {
             throw new RuntimeException(e);
         }
     }
+
+    public void unsubscribe() throws MqttException {
+        mqttPublisher.unsubscribe(topic);
+    }
     public void publish(String message){
         publish(topic, message);
     }
