@@ -8,11 +8,11 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 public class ClientApp {
+    static int i = 0;
     public static void main(String[] args) throws InterruptedException {
         Echo remoteEcho;
         try {
             remoteEcho = (Echo) Naming.lookup("//localhost:8088/Echo/master");
-            int i = 0;
             while(true){
                 i++;
                 System.out.println(remoteEcho.echo(String.format("Teste %d", i)));
@@ -22,6 +22,7 @@ public class ClientApp {
                 Thread.sleep(2000);
             }
         } catch (MalformedURLException | NotBoundException | RemoteException | InterruptedException e) {
+            i--;
             Thread.sleep(5000);
             main(args);
         }
