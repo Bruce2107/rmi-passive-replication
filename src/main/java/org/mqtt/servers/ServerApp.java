@@ -66,6 +66,9 @@ public class ServerApp {
         return (Echo) Naming.lookup("//localhost:8088/Echo/master");
     }
 
+    private static Echo getClone(String cloneName) throws MalformedURLException, NotBoundException, RemoteException {
+        return (Echo) Naming.lookup("//localhost:8088/"+cloneName);
+    }
 
     private static void healthCheckMaster() {
         var executor = Executors.newSingleThreadScheduledExecutor();
@@ -116,14 +119,18 @@ public class ServerApp {
             }
             var myOrder = getOrder();
             if (myOrder == order) {
-                System.out.println(order);
                 registry.unbind(cloneName);
                 mqttService.unsubscribe();
                 bindName(echoServer,"master");
             } else {
-                healthCheckMaster();
+                try {
+                    var newMasterClone = getClone(cloneName);
+                    newMasterClone.healthCheck();
+                } catch (RemoteException e) {
+                    registry.unbind(cloneName);
+                    electNewMaster();
+                }
             }
-            System.out.println(Arrays.toString(registry.list()));
         } catch (RemoteException | NotBoundException | MqttException | MalformedURLException e) {
             throw new RuntimeException(e);
         }
