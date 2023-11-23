@@ -33,11 +33,9 @@ public class ServerApp {
             mqttService = new MqttService(serverName);
             echoServer = new EchoServer(mqttService);
             bindName(echoServer, serverName);
-            if (notMaster(serverName)) {
-                mqttService.subscribe();
-            }
             mqttService.setMqttCallBack(callback(echoServer));
-            if (notMaster(serverName)) {
+            if (!isMaster(serverName)) {
+                mqttService.subscribe();
                 getHistory();
                 healthCheckMaster();
             }
@@ -58,16 +56,16 @@ public class ServerApp {
         return getServerName(++i);
     }
 
-    private static boolean notMaster(String serverName) {
-        return !serverName.contains("master");
+    private static boolean isMaster(String serverName) {
+        return serverName.contains("master");
     }
 
     private static Echo getMaster() throws MalformedURLException, NotBoundException, RemoteException {
-        return (Echo) Naming.lookup("//localhost:8088/Echo/master");
+        return getRemote("Echo/master");
     }
 
-    private static Echo getClone(String cloneName) throws MalformedURLException, NotBoundException, RemoteException {
-        return (Echo) Naming.lookup("//localhost:8088/"+cloneName);
+    private static Echo getRemote(String remoteName) throws MalformedURLException, NotBoundException, RemoteException {
+        return (Echo) Naming.lookup("//localhost:8088/"+remoteName);
     }
 
     private static void healthCheckMaster() {
@@ -124,7 +122,7 @@ public class ServerApp {
                 bindName(echoServer,"master");
             } else {
                 try {
-                    var newMasterClone = getClone(cloneName);
+                    var newMasterClone = getRemote(cloneName);
                     newMasterClone.healthCheck();
                 } catch (RemoteException e) {
                     registry.unbind(cloneName);
@@ -157,7 +155,7 @@ public class ServerApp {
             public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
                 echoServer.addMessage(mqttMessage.toString());
                 System.out.println(echoServer.getListOfMsg());
-                System.out.println("Mensagem adicionada no servidor: " + mqttMessage.toString());
+                System.out.println("Mensagem adicionada no servidor: " + mqttMessage);
             }
 
             @Override
