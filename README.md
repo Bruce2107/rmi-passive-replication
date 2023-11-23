@@ -1,56 +1,62 @@
-# MQTT Basics
+# Aplicação tolerante a falha
 
-This project is intended to show the basic usage of Mosquitto, 
-an Eclipse Message Broker, through Docker and Java.
+Projeto para a disciplina de Sistemas Distribuidos - UDESC - Joinville:SC<br>
 
+## Instalação
 
-## Installation
-
-These are some of the tools you're going to need in order to run this project:
-
-```
-  maven
-  docker
-  java 11
-  docker-compose (or docker compose)
-```
+Clone o repositorio [rmi-passive-replication](https://github.com/Bruce2107/rmi-passive-replication)
     
 
-## Usage
+## Uso
 
-This command will run the mqtt-broker + mqtt-sub + mqtt-pub. 
-The terminal will be attached with the docker compose logs, 
-and mqtt-sub will log every message that comes into mqtt-topic.   
-```
-docker compose up --build
-```
-After that, you might want to see everything working. 
-Just run this command in another terminal to publish a message into mqtt-topic defined into docker-compose.yaml.
-```
-docker compose run mqtt-pub sh -c "mosquitto_pub -h mqtt-broker -t mqtt-topic -m 'Hello World'"
-```
-It basically runs a container with the command inside the commas.
-You should see the message "Hello World" in the terminal where you ran the first docker compose command.
+- Iniciar o serviço do MQTT-Broker (docker-compose)
+- Gere o arquivo jar da aplicação utilizando a classe Main como principal
+- Para gerar o arquivo jar pelo Intellij acesse no menu superior o item Build -> Build Artifactory -> Build
+- Execute a arquivo jar pelo terminal usando o comando `java -jar ./mqtt-project.jar <tipo>`
+- Valores possiveis para o parametro `tipo`: rmi, server, client
+- Obrigatoriamente deve ser executado primeiramente utilizando o tipo rmi
 
-To publish a message into mqtt-topic from this Java project, you just have to open it inside your IDE, 
-run maven dependencies and then run the project.
+## Exemplo de execução
 
+### Exemplo 1
+1. `java -jar ./mqtt-project.jar rmi`
+2. `java -jar ./mqtt-project.jar server`
+3. `java -jar ./mqtt-project.jar client`
+4. `java -jar ./mqtt-project.jar server`
+5. `java -jar ./mqtt-project.jar server`
 
-## Support
+### Exemplo 2
+1. `java -jar ./mqtt-project.jar rmi`
+2. `java -jar ./mqtt-project.jar server`
+3. `java -jar ./mqtt-project.jar server`
+4. `java -jar ./mqtt-project.jar server`
+5. `java -jar ./mqtt-project.jar client`
 
-If you have any questions, feel free to email me at cristianeduardo.dev@gmail.com.
+### Exemplo 3
+1. `java -jar ./mqtt-project.jar rmi`
+2. `java -jar ./mqtt-project.jar client`
+3. `java -jar ./mqtt-project.jar server`
+4. `java -jar ./mqtt-project.jar server`
+5. `java -jar ./mqtt-project.jar server`
 
+## Testes
 
-## Contributions
+### Teste 1
+1. Iniciar o RMI (passo 1 dos exemplos)
+2. Inciar um servidor ou o cliente
+3. Iniciar os servidores de replica
+4. Derrubar o servidor mestre
+5. O cliente aguarda 5 segundo após receber uma falha e manda mensagens novamente
+6. O servidor de replica 1 deve assumir
 
-If you have any contributions to make, feel free to open an issue or PR.
-
-
-## References
-
- - [MQTT Broker with Docker](https://dev.to/abbazs/a-step-by-step-guide-for-starting-a-mosquitto-broker-service-in-a-containers-with-docker-compose-1j8i)
- - [MQTT Client in Java](https://www.baeldung.com/java-mqtt-client)
-
+### Teste 2
+1. Iniciar o RMI (passo 1 dos exemplos)
+2. Inciar um servidor ou o cliente
+3. Iniciar os servidores de replica
+4. Derrubar o servidor de replica 1
+5. Derrubar o servidor mestre
+5. O cliente aguarda 5 segundo após receber uma falha e manda mensagens novamente
+6. O servidor de replica 2 deve assumir
 
 ## License
 
